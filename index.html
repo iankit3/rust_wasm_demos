@@ -9,16 +9,29 @@
 <body>
     <script>
         let wasm_module = fetch("/target/wasm32-unknown-unknown/debug/demo.wasm");
-        let getDiv;
-        WebAssembly.instantiateStreaming(wasm_module).then((module) => {
-            console.log(module);
-            getDiv = module.instance.exports.div;
-            let textNode = document.createTextNode(module.instance.exports.div(10,2));
+
+        function printResultInDOM(result){
+            let textNode = document.createTextNode(result);
             document.body.appendChild(textNode);
+        }
+
+        /**
+         * @name getDiv
+         * @type function(a,b)
+         * @params a:i32 , b:i32
+         * @returns i32
+         * 
+         * **/
+        let getDiv;
+
+        WebAssembly.instantiateStreaming(wasm_module).then((module) => {
+            getDiv = module.instance.exports.div;
+        }).then(e => {
+            //On WASM module ready
+            printResultInDOM(getDiv(120,90))
+        })  
 
 
-
-        });  
     </script>
 </body>
 </html>
